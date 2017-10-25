@@ -11,6 +11,7 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextArea;
@@ -60,11 +61,14 @@ public class MiUI extends UI {
             // Create a grid bound to the list
             
             grid.setItems((List)repoMensa.findAll());
+            grid.addColumn(Mensajito::getId).setCaption("id del mensaje");
             grid.addColumn(Mensajito::getTitulo).setCaption("Titulo del mensaje");
             grid.addColumn(Mensajito::getCuerpo).setCaption("Cuerpo del mensaje");
             }
             
         });
+        
+        
        
         layout.addComponent(etiqueta);
         layout.addComponent(etiquetaGuardar);
@@ -72,8 +76,48 @@ public class MiUI extends UI {
         layout.addComponent(textoCuerpo);
         layout.addComponent(boton);
         layout.addComponent(grid);
-       
+        
+        //Primero creamos un horizontal layout
+        HorizontalLayout layout1 = new HorizontalLayout();
+        TextField textoId = new TextField();
+        textoId.setPlaceholder("Introduce el id");
+        Button botonBuscar = new Button("Buscar");
+        botonBuscar.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        
+   
+        layout1.addComponent(textoId);
+        layout1.addComponent(botonBuscar);
+        layout.addComponent(layout1);
+        
+        //Creamos otro layout para los campos de texto
+        HorizontalLayout layout2 = new HorizontalLayout();
+        TextField textoBuscarId = new TextField();
+         TextField textoBuscarTitulo = new TextField();
+          TextArea textoBuscarCuerpo = new TextArea();
+        
+          layout2.addComponent(textoBuscarId);
+         layout2.addComponent(textoBuscarTitulo);
+         layout2.addComponent(textoBuscarCuerpo);
+          layout.addComponent(layout2);
+          
+          Button botonActualizar = new Button("Actualizar");
+          botonActualizar.addStyleName(ValoTheme.BUTTON_FRIENDLY);
+          layout.addComponent(botonActualizar);
+          
+    
         setContent(layout);
+        //Vamos a buscar por id
+        botonBuscar.addClickListener(evento->{
+            Mensajito mensa = repoMensa.findOne(Integer.parseInt(textoId.getValue()));
+            //Ajustamos los 3 campos con los datos
+            //Primero el id
+            textoBuscarId.setValue(""+ mensa.getId());
+            textoBuscarTitulo.setValue(mensa.getTitulo());
+            textoBuscarCuerpo.setValue(mensa.getCuerpo());
+            
+            textoBuscarId.setEnabled(false);
+            
+        });
         
     }
     
